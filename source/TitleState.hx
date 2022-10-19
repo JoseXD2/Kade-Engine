@@ -46,9 +46,9 @@ class TitleState extends MusicBeatState
 	override public function create():Void
 	{
 		// TODO: Refactor this to use OpenFlAssets.
-		#if FEATURE_FILESYSTEM
-		if (!sys.FileSystem.exists(Sys.getCwd() + "/assets/replays"))
-			sys.FileSystem.createDirectory(Sys.getCwd() + "/assets/replays");
+		#if sys
+		if (FileSystem.exists(Main.path + "/assets/replays"))
+			FileSystem.createDirectory(Main.path + "/assets/replays");
 		#end
 
 		@:privateAccess
@@ -105,14 +105,14 @@ class TitleState extends MusicBeatState
 		FlxG.switchState(new ChartingState());
 		clean();
 		#else
-		#if !cpp
+		
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
 		});
-		#else
+		
 		startIntro();
-		#end
+		
 		#end
 	}
 
@@ -263,7 +263,7 @@ class TitleState extends MusicBeatState
 
 		var pressedEnter:Bool = controls.ACCEPT;
 
-		#if mobile
+		#if android
 		for (touch in FlxG.touches.list)
 		{
 			if (touch.justPressed)
