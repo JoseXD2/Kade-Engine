@@ -355,7 +355,7 @@ class PlayState extends MusicBeatState
 
 		removedVideo = false;
 
-		
+		#if FEATURE_LUAMODCHART
 		// TODO: Refactor this to use OpenFlAssets.
 		#if android
 		executeModchart = openfl.utils.Assets.exists("assets/data/" + PlayState.SONG.song.toLowerCase() + "/modchart.lua");
@@ -799,7 +799,7 @@ class PlayState extends MusicBeatState
 
 		generateSong(SONG.songId);
 
-		
+		#if FEATURE_LUAMODCHART 
 		if (executeModchart)
 		{
 			luaModchart = ModchartState.createModchartState(isStoryMode);
@@ -818,7 +818,7 @@ class PlayState extends MusicBeatState
 			new LuaCharacter(gf, "gf").Register(ModchartState.lua);
 			new LuaCharacter(boyfriend, "boyfriend").Register(ModchartState.lua);
 		}
-		
+		#end
 
 		var index = 0;
 
