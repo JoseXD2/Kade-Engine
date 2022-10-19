@@ -16,6 +16,7 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import lime.utils.Assets;
 #if FEATURE_FILESYSTEM
 import sys.FileSystem;
 import sys.io.File;
