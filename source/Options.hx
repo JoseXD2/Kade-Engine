@@ -110,7 +110,9 @@ class UpKeybind extends Option
 
 	public override function press()
 	{
+		#if windows
 		Debug.logTrace("keybind change");
+		#end
 		waitingType = !waitingType;
 
 		return true;
@@ -121,7 +123,25 @@ class UpKeybind extends Option
 		return "UP: " + (waitingType ? "> " + FlxG.save.data.upBind + " <" : FlxG.save.data.upBind) + "";
 	}
 }
+class AndroidControls extends Option
+{
+	public function new()
+	{
+		super();
+	}
 
+	public override function press():Bool
+	{
+		trace("switch");
+		FlxG.switchState(new android.AndroidControlsMenu());
+		return false;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Android Controls";
+	}
+}
 class DownKeybind extends Option
 {
 	public function new(desc:String)
@@ -142,7 +162,9 @@ class DownKeybind extends Option
 
 	public override function press()
 	{
+		#if windows
 		Debug.logTrace("keybind change");
+		#end
 		waitingType = !waitingType;
 
 		return true;
@@ -174,7 +196,9 @@ class RightKeybind extends Option
 
 	public override function press()
 	{
+		#if windows
 		Debug.logTrace("keybind change");
+		#end
 		waitingType = !waitingType;
 
 		return true;
@@ -206,7 +230,9 @@ class LeftKeybind extends Option
 
 	public override function press()
 	{
+		#if windows
 		Debug.logTrace("keybind change");
+		#end
 		waitingType = !waitingType;
 
 		return true;
@@ -238,7 +264,9 @@ class PauseKeybind extends Option
 
 	public override function press()
 	{
+		#if windows
 		Debug.logTrace("keybind change");
+		 #end
 		waitingType = !waitingType;
 
 		return true;
