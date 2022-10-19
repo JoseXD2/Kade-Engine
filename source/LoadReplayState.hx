@@ -183,9 +183,9 @@ class LoadReplayState extends MusicBeatState
 
 				var songPath = "";
 
-				#if FEATURE_STEPMANIA
+				#if sys
 				if (PlayState.rep.replay.sm)
-					if (!FileSystem.exists(StringTools.replace(PlayState.rep.replay.chartPath, "converted.json", "")))
+					if (!Assets.exists(StringTools.replace(PlayState.rep.replay.chartPath, "converted.json", "")))
 					{
 						Application.current.window.alert("The SM file in this replay does not exist!", "SM Replays");
 						return;
@@ -201,7 +201,7 @@ class LoadReplayState extends MusicBeatState
 				#if FEATURE_STEPMANIA
 				if (PlayState.isSM)
 				{
-					songPath = File.getContent(PlayState.rep.replay.chartPath);
+					songPath = Assets.getText(PlayState.rep.replay.chartPath);
 					try
 					{
 						PlayState.sm = SMFile.loadFile(PlayState.pathToSm + "/" + StringTools.replace(PlayState.rep.replay.songName, " ", "_") + ".sm");
