@@ -7,6 +7,7 @@ import openfl.events.IOErrorEvent;
 import openfl.events.Event;
 import openfl.net.FileReference;
 import haxe.Json;
+import lime.utils.Assets;
 import flixel.input.keyboard.FlxKey;
 import openfl.utils.Dictionary;
 
@@ -133,10 +134,10 @@ class Replay
 	public function LoadFromJSON()
 	{
 		#if FEATURE_FILESYSTEM
-		trace('loading ' + Sys.getCwd() + 'assets/replays/' + path + ' replay...');
+		trace('loading ' + Main.path + 'assets/replays/' + path + ' replay...');
 		try
 		{
-			var repl:ReplayJSON = cast Json.parse(File.getContent(Sys.getCwd() + "assets/replays/" + path));
+			var repl:ReplayJSON = cast Json.parse(Assets.getText("assets/replays/" + path));
 			replay = repl;
 		}
 		catch (e)
