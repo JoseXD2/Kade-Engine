@@ -355,20 +355,22 @@ class PlayState extends MusicBeatState
 
 		removedVideo = false;
 
-		#if FEATURE_LUAMODCHART
+		
 		// TODO: Refactor this to use OpenFlAssets.
-		executeModchart = FileSystem.exists(Paths.lua('songs/${PlayState.SONG.songId}/modchart'));
+		#if android
+		executeModchart = openfl.utils.Assets.exists("assets/data/" + PlayState.SONG.song.toLowerCase() + "/modchart.lua");
 		if (isSM)
-			executeModchart = FileSystem.exists(pathToSm + "/modchart.lua");
+			executeModchart = openfl.utils.Assets.exists(pathToSm + "/modchart.lua");
 		if (executeModchart)
 			PlayStateChangeables.Optimize = false;
 		#end
 		#if !cpp
 		executeModchart = false; // FORCE disable for non cpp targets
 		#end
-
+        
+			#if windows 
 		Debug.logInfo('Searching for mod chart? ($executeModchart) at ${Paths.lua('songs/${PlayState.SONG.songId}/modchart')}');
-
+                   #end
 		if (executeModchart)
 			songMultiplier = 1;
 
@@ -561,7 +563,7 @@ class PlayState extends MusicBeatState
 
 			if (gf.frames == null)
 			{
-				#if debug
+				#if windows 
 				FlxG.log.warn(["Couldn't load gf: " + gfCheck + ". Loading default gf"]);
 				#end
 				gf = new Character(400, 130, 'gf');
@@ -571,7 +573,7 @@ class PlayState extends MusicBeatState
 
 			if (boyfriend.frames == null)
 			{
-				#if debug
+				#if windows 
 				FlxG.log.warn(["Couldn't load boyfriend: " + SONG.player1 + ". Loading default boyfriend"]);
 				#end
 				boyfriend = new Boyfriend(770, 450, 'bf');
@@ -581,7 +583,7 @@ class PlayState extends MusicBeatState
 
 			if (dad.frames == null)
 			{
-				#if debug
+				#if windows 
 				FlxG.log.warn(["Couldn't load opponent: " + SONG.player2 + ". Loading default opponent"]);
 				#end
 				dad = new Character(100, 100, 'dad');
@@ -797,15 +799,15 @@ class PlayState extends MusicBeatState
 
 		generateSong(SONG.songId);
 
-		#if FEATURE_LUAMODCHART
+		
 		if (executeModchart)
 		{
 			luaModchart = ModchartState.createModchartState(isStoryMode);
 			luaModchart.executeState('start', [PlayState.SONG.songId]);
 		}
-		#end
+		
 
-		#if FEATURE_LUAMODCHART
+		
 		if (executeModchart)
 		{
 			new LuaCamera(camGame, "camGame").Register(ModchartState.lua);
@@ -816,7 +818,7 @@ class PlayState extends MusicBeatState
 			new LuaCharacter(gf, "gf").Register(ModchartState.lua);
 			new LuaCharacter(boyfriend, "boyfriend").Register(ModchartState.lua);
 		}
-		#end
+		
 
 		var index = 0;
 
@@ -968,6 +970,10 @@ class PlayState extends MusicBeatState
 			doof.cameras = [camHUD];
 		kadeEngineWatermark.cameras = [camHUD];
 
+			#if android
+	        addAndroidControls();
+	#end
+		
 		startingSong = true;
 
 		trace('starting');
@@ -1134,6 +1140,10 @@ class PlayState extends MusicBeatState
 
 	function startCountdown():Void
 	{
+		#if android
+	        androidc.visible = true;
+	        #end
+			
 		inCutscene = false;
 
 		appearStaticArrows();
@@ -3869,12 +3879,7 @@ class PlayState extends MusicBeatState
 			releaseArray = [false, false, false, false];
 		}
 
-		var anas:Array<Ana> = [null, null, null, null];
-
-		for (i in 0...pressArray.length)
-			if (pressArray[i])
-				anas[i] = new Ana(Conductor.songPosition, null, false, "miss", i);
-
+		
 		// HOLDS, check for sustain notes
 		if (holdArray.contains(true) && /*!boyfriend.stunned && */ generatedMusic)
 		{
@@ -3887,8 +3892,7 @@ class PlayState extends MusicBeatState
 			});
 		}
 
-		if ((KeyBinds.gamepad && !FlxG.keys.justPressed.ANY))
-		{
+		
 			// PRESSES, check for note hits
 			if (pressArray.contains(true) && generatedMusic)
 			{
@@ -3963,10 +3967,7 @@ class PlayState extends MusicBeatState
 								mashViolations--;
 							hit[coolNote.noteData] = true;
 							scoreTxt.color = FlxColor.WHITE;
-							var noteDiff:Float = -(coolNote.strumTime - Conductor.songPosition);
-							anas[coolNote.noteData].hit = true;
-							anas[coolNote.noteData].hitJudge = Ratings.judgeNote(noteDiff);
-							anas[coolNote.noteData].nearestNote = [coolNote.strumTime, coolNote.noteData, coolNote.sustainLength];
+							
 							goodNoteHit(coolNote);
 						}
 					}
@@ -3985,11 +3986,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (!loadRep)
-				for (i in anas)
-					if (i != null)
-						replayAna.anaArray.push(i); // put em all there
-		}
+			
 		if (PlayStateChangeables.botPlay)
 			notes.forEachAlive(function(daNote:Note)
 			{
@@ -4027,12 +4024,12 @@ class PlayState extends MusicBeatState
 		{
 			if (!PlayStateChangeables.botPlay)
 			{
-				if (keys[spr.ID]
+				if (holdArray[spr.ID]
 					&& spr.animation.curAnim.name != 'confirm'
 					&& spr.animation.curAnim.name != 'pressed'
 					&& !spr.animation.curAnim.name.startsWith('dirCon'))
 					spr.playAnim('pressed', false);
-				if (!keys[spr.ID])
+				if (!holdArray[spr.ID])
 					spr.playAnim('static', false);
 			}
 			else if (FlxG.save.data.cpuStrums)
