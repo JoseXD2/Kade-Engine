@@ -118,6 +118,7 @@ class OptionsMenu extends FlxSubState
 	{
 		options = [
 			new OptionCata(50, 40, "Gameplay", [
+				new AndroidControls(),
 				new ScrollSpeedOption("Change your scroll speed. (1 = Chart dependent)"),
 				new OffsetThing("Change the note audio offset (how many milliseconds a note is offset in a chart)"),
 				new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
@@ -158,8 +159,8 @@ class OptionsMenu extends FlxSubState
 				new ShowInput("Display every single input on the score screen."),
 			]),
 			new OptionCata(935, 40, "Saves", [
-				#if desktop // new ReplayOption("View saved song replays."),
-				#end
+				new ReplayOption("View saved song replays."),
+				
 				new ResetScoreOption("Reset your score on all songs and weeks. This is irreversible!"),
 				new LockWeeksOption("Reset your story mode progress. This is irreversible!"),
 				new ResetSettings("Reset ALL your settings. This is irreversible!")
@@ -237,6 +238,10 @@ class OptionsMenu extends FlxSubState
 
 		selectedOption = selectedCat.options[0];
 
+		#if android
+		addVirtualPad(FULL, A_B);
+		#end
+			
 		super.create();
 	}
 
@@ -312,11 +317,15 @@ class OptionsMenu extends FlxSubState
 		}
 		catch (e)
 		{
+			#if windows
 			Debug.logError("oops\n" + e);
+			#end
 			selectedCatIndex = 0;
 		}
 
+		#if windows
 		Debug.logTrace("Changed cat: " + selectedCatIndex);
+		#end
 	}
 
 	public function selectOption(option:Option)
@@ -331,9 +340,11 @@ class OptionsMenu extends FlxSubState
 
 			descText.text = option.getDescription();
 		}
+		#if windows
 		Debug.logTrace("Changed opt: " + selectedOptionIndex);
 
 		Debug.logTrace("Bounds: " + visibleRange[0] + "," + visibleRange[1]);
+		#end
 	}
 
 	override function update(elapsed:Float)
@@ -350,14 +361,14 @@ class OptionsMenu extends FlxSubState
 		var any = false;
 		var escape = false;
 
-		accept = FlxG.keys.justPressed.ENTER || (gamepad != null ? gamepad.justPressed.A : false);
-		right = FlxG.keys.justPressed.RIGHT || (gamepad != null ? gamepad.justPressed.DPAD_RIGHT : false);
-		left = FlxG.keys.justPressed.LEFT || (gamepad != null ? gamepad.justPressed.DPAD_LEFT : false);
-		up = FlxG.keys.justPressed.UP || (gamepad != null ? gamepad.justPressed.DPAD_UP : false);
-		down = FlxG.keys.justPressed.DOWN || (gamepad != null ? gamepad.justPressed.DPAD_DOWN : false);
+		accept = controls.ACCEPT || (gamepad != null ? gamepad.justPressed.A : false);
+		right = controls.RIGHT_P || (gamepad != null ? gamepad.justPressed.DPAD_RIGHT : false);
+		left = controls.LEFT_P || (gamepad != null ? gamepad.justPressed.DPAD_LEFT : false);
+		up = controls.UP_P || (gamepad != null ? gamepad.justPressed.DPAD_UP : false);
+		down = controls.DOWN_P || (gamepad != null ? gamepad.justPressed.DPAD_DOWN : false);
 
 		any = FlxG.keys.justPressed.ANY || (gamepad != null ? gamepad.justPressed.ANY : false);
-		escape = FlxG.keys.justPressed.ESCAPE || (gamepad != null ? gamepad.justPressed.B : false);
+		escape = controls.BACK || (gamepad != null ? gamepad.justPressed.B : false);
 
 		if (selectedCat != null && !isInCat)
 		{
@@ -557,7 +568,9 @@ class OptionsMenu extends FlxSubState
 						FlxG.save.flush();
 
 						object.text = "> " + selectedOption.getValue();
+						#if windows
 						Debug.logTrace("New text: " + object.text);
+						#end
 					}
 					else if (left)
 					{
@@ -568,7 +581,9 @@ class OptionsMenu extends FlxSubState
 						FlxG.save.flush();
 
 						object.text = "> " + selectedOption.getValue();
+						#if windows
 						Debug.logTrace("New text: " + object.text);
+						#end
 					}
 
 					if (escape)
@@ -617,7 +632,9 @@ class OptionsMenu extends FlxSubState
 		}
 		catch (e)
 		{
+			#if windows
 			Debug.logError("wtf we actually did something wrong, but we dont crash bois.\n" + e);
+			#end
 			selectedCatIndex = 0;
 			selectedOptionIndex = 0;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
